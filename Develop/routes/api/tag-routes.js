@@ -56,16 +56,54 @@ router.get('/:id', (req, res) => {
 
 router.post('/', (req, res) => {
   // create a new tag
-  Tag.create
+  Tag.create({
+    tag_name: req.body.tag_name,
+  })
+  .then((categoryData) => res.json(categoryData))
+  .catch((err) => {
+    console.log(err);
+    res.status(500).json(err);
+  })
 });
 
 router.put('/:id', (req, res) => {
   // update a tag's name by its `id` value
+  Tag.update({
+    tag_name: req.body.tag_name,
+  },
+  {
+    where: {
+      id: req.params.id,
+    },
+  }
+  )
+  .then((categoryData) => {
+    if (!categoryData) {
+      res.status(404).json({message: "Unable to find tag by it's ID value!"});
+      return;
+    }
+    res.json(categoryData);
+  })
 });
 
 router.delete('/:id', (req, res) => {
   // delete on tag by its `id` value
-  Tag.update
+  Tag.destroy({
+      where: {
+        id: req.params.id,
+      },
+    })
+    .then((categoryData) => {
+      if (!categoryData) {
+        res.status(404).json({message: "Unable to find category!"});
+        return;
+      }
+      res.json(categoryData);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 module.exports = router;
